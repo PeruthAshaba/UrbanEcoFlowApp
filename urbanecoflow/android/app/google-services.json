@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "153993018766",
+    "project_id": "urbanecoflow",
+    "storage_bucket": "urbanecoflow.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:153993018766:android:2f6eaee644ba5bdd73b8df",
+        "android_client_info": {
+          "package_name": "com.example.urbanecoflow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "153993018766-gltpem5qijkujs5npgm9somjqbt6hcc4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.urbanecoflow",
+            "certificate_hash": "8e3c013fa3f1c46f76410231aea64b16e9dff756"
+          }
+        },
+        {
+          "client_id": "153993018766-ua1jtfp0kijml78rlduf7tp76p6b6jgk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANUs4l67YT0Ccc9VUHglcN1pRY-38wTOk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "153993018766-ua1jtfp0kijml78rlduf7tp76p6b6jgk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "153993018766-t4ucedh9l1vl0jut671sans8b9gji8dd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.urbanecoflow"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
