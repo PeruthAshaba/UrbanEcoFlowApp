@@ -55,7 +55,7 @@ class MyHomePage extends StatelessWidget {
           AppButtonWidget(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const AddAppointmentPage()));
+                  builder: (context) => const AppointmentListPage()));
               // Navigator.push(
               //   context,
               //   MaterialPageRoute(builder: (context) => const PickupScreen()),

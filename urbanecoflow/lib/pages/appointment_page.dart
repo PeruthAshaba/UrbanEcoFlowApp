@@ -22,16 +22,7 @@ class AppointmentListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final allAppointmentsState = ref.watch(allAppointmentsProvider);
     final appointmentCRUDState = ref.watch(appointmentCRUDProvider);
-    ref.listen(appointmentCRUDProvider, (previous, next) async {
-      if (next.status == Status.loaded) {
-        ref.invalidate(allAppointmentsProvider);
-      }
-      if (next.status == Status.error) {
-        Fluttertoast.cancel();
-        Fluttertoast.showToast(
-            msg: next.message ?? 'An error occurred !', timeInSecForIosWeb: 6);
-      }
-    });
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Appointments'),
@@ -53,9 +44,19 @@ class AppointmentListPage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
           backgroundColor: primaryColor,
-          onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
+          onPressed: () async {
+            var pick = await Navigator.of(context).push<bool>(MaterialPageRoute(
                 builder: (context) => const AddAppointmentPage()));
+            print(pick);
+            print('=====================================');
+            if (pick == true) {
+              _showMaterialBanner(context);
+              //     Fluttertoast.cancel();
+              // Fluttertoast.showToast(
+              //     msg:
+              //         'Thank you for choosing Urban Eco Flow App, we are going to contact you soon',
+              //     timeInSecForIosWeb: 6);
+            }
           },
           label: const Text('Schedule Pickup',
               style: TextStyle(color: whiteColor)),
@@ -91,6 +92,29 @@ class AppointmentListPage extends ConsumerWidget {
       ),
     );
   }
+
+  void _showMaterialBanner(BuildContext context) {
+    final banner = MaterialBanner(
+      padding: const EdgeInsets.all(10),
+      content: const Text(
+          'Thank you for choosing Urban Eco Flow App, we are going to contact you soon',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: whiteColor)),
+      leading: const Icon(Icons.info, color: whiteColor),
+      backgroundColor: primaryColor,
+      actions: [
+        TextButton(
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+          },
+          child: const Text('OK'),
+        ),
+      ],
+    );
+
+    // Show the material banner
+    ScaffoldMessenger.of(context).showMaterialBanner(banner);
+  }
 }
 
 class AppointmentDetailsPage extends StatelessWidget {
@@ -100,7 +124,6 @@ class AppointmentDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(appointment.image);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Appointment Details'),
@@ -126,6 +149,8 @@ class AppointmentDetailsPage extends StatelessWidget {
             const SizedBox(height: 10),
             Text('Status : ${appointment.picked ? 'Picked' : 'Pending'}'),
             const SizedBox(height: 10),
+            // const Text('Amount : UGX 2,000'),
+            // const SizedBox(height: 10),
             const Text('Contact Information',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             const SizedBox(height: 20),
@@ -172,7 +197,17 @@ class _AddPageState extends ConsumerState<AddAppointmentPage> {
   @override
   Widget build(BuildContext context) {
     final appointmentCRUDState = ref.watch(appointmentCRUDProvider);
-
+    ref.listen(appointmentCRUDProvider, (previous, next) async {
+      if (next.status == Status.loaded) {
+        ref.invalidate(allAppointmentsProvider);
+        Navigator.of(context).pop(true);
+      }
+      if (next.status == Status.error) {
+        Fluttertoast.cancel();
+        Fluttertoast.showToast(
+            msg: next.message ?? 'An error occurred !', timeInSecForIosWeb: 6);
+      }
+    });
     return Scaffold(
       appBar: AppBar(
         title: const Text('Schedule Pickup'),
@@ -298,6 +333,22 @@ class _AddPageState extends ConsumerState<AddAppointmentPage> {
                       return null;
                     },
                   ),
+                  const SizedBox(height: 16.0),
+                  TextFieldWidget(
+                      readOnly: true,
+                      label: 'Payment Method',
+                      initialValue: 'Cash',
+                      key: UniqueKey(),
+                      prefixIcon: const SizedBox(
+                          width: 50,
+                          child: Center(
+                              child: Padding(
+                            padding: EdgeInsets.all(5),
+                            child: Text(
+                              'UGX',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          )))),
                   const SizedBox(height: 24.0),
                   AppButtonWidget(
                       borderRadius: 15,
