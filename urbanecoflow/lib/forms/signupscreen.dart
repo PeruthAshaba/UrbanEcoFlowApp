@@ -1,125 +1,183 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:urbanecoflow/forms/loginpage.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SignUpScreen extends StatelessWidget {
+import '../controllers/user_controller.dart';
+import '../core/state.dart';
+import '../pages/widgets/app_button_widget.dart';
+import '../pages/widgets/text_field_widget.dart';
+import '../utils/colors.dart';
+import '../utils/helpers.dart';
+
+class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
 
   @override
+  ConsumerState<SignUpScreen> createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends ConsumerState<SignUpScreen> {
+  final TextEditingController emailController = TextEditingController();
+
+  final TextEditingController passwordController = TextEditingController();
+
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+
+  final TextEditingController usernameController = TextEditingController();
+
+  final TextEditingController contactController = TextEditingController();
+
+  bool showPassword = true;
+
+  final _formKey = GlobalKey<FormState>();
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Center(
-            child: Container(
-              width: 400.0,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 100.0),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 100.0,
-                          height: 100.0,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZsuxUrEVyvCmLYoM5BeyNUOts2akw1RFDYw&usqp=CAU"),
-                              fit: BoxFit.cover,
-                            ),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ],
+    final userState = ref.watch(userProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Register'),
+        actions: [
+          userState.status == Status.loading
+              ? const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: CircularProgressIndicator(
+                      color: primaryColor,
+                      strokeWidth: 1,
                     ),
-                    const SizedBox(height: 10.0),
-                    Container(
-                      width: double.infinity,
-                      height: 40.0,
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Full Name',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                        ),
-                      ),
+                  ),
+                )
+              : Container()
+        ],
+      ),
+      body: Container(
+        // decoration: BoxDecoration(
+        //   color: Color.fromRGBO(8, 8, 0,
+        //       0.5), // Transparent white (adjust the alpha value as needed)
+        // ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                // crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  const Icon(
+                    CupertinoIcons.person,
+                    size: 100.0,
+                    // backgroundImage: NetworkImage(
+                    //   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZsuxUrEVyvCmLYoM5BeyNUOts2akw1RFDYw&usqp=CAU",
+                    // ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFieldWidget(
+                    controller: usernameController,
+                    label: 'Full name',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your full name';
+                      }
+                      return null;
+                    },
+                    prefixIcon: const Icon(Icons.person),
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFieldWidget(
+                    controller: emailController,
+                    label: 'Email',
+                    prefixIcon: const Icon(Icons.email),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      if (!Helpers.emailValidator(value)) {
+                        return 'The Entered email is not valid';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFieldWidget(
+                    controller: passwordController,
+                    label: 'Password',
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: InkWell(
+                      onTap: () {
+                        setState(() {
+                          showPassword = !showPassword;
+                        });
+                      },
+                      child: Icon(showPassword
+                          ? Icons.visibility_sharp
+                          : Icons.visibility_off_rounded),
                     ),
-                    const SizedBox(height: 10.0),
-                    Container(
-                      width: double.infinity,
-                      height: 40.0,
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                        ),
-                      ),
+                    obscureText: showPassword,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFieldWidget(
+                    controller: confirmPasswordController,
+                    label: 'Confirm Password',
+                    prefixIcon: const Icon(Icons.lock),
+                    obscureText: showPassword,
+                    suffixIcon: InkWell(
+                      onTap: () {
+                        setState(() {
+                          showPassword = !showPassword;
+                        });
+                      },
+                      child: Icon(showPassword
+                          ? Icons.visibility_sharp
+                          : Icons.visibility_off_rounded),
                     ),
-                    const SizedBox(height: 10.0),
-                    Container(
-                      width: double.infinity,
-                      height: 40.0,
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                        ),
-                        obscureText: true,
-                      ),
-                    ),
-                    const SizedBox(height: 15.0),
-                    Container(
-                      width: double.infinity,
-                      height: 40.0,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginScreen()),
-                          );
-                        },
-                        child: Text('Sign Up'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                            Colors.green,
-                          foregroundColor: Colors.white,
-                          textStyle: const TextStyle(
-                            fontSize: 18.0,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Already have an account?"),
-                        const SizedBox(width: 5.0),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LoginScreen()),
-                            );
-                          },
-                          child: const Text('Login'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please confirm your password';
+                      }
+                      if (value != passwordController.text) {
+                        return 'Passwords do not match';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 24.0),
+                  AppButtonWidget(
+                      borderRadius: 15,
+                      onTap: userState.status == Status.loading
+                          ? null
+                          : () {
+                              if (_formKey.currentState!.validate()) {
+                                // signUp(
+                                //   emailController.text,
+                                //   passwordController.text,
+                                //   usernameController.text,
+                                //   contactController.text,
+                                // );
+                                ref.read(userProvider.notifier).register(
+                                    email: emailController.text,
+                                    password: passwordController.text,
+                                    username: usernameController.text);
+                              }
+                            },
+                      child: const Text('Register',
+                          style: TextStyle(color: whiteColor))),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
               ),
             ),
           ),
@@ -128,5 +186,3 @@ class SignUpScreen extends StatelessWidget {
     );
   }
 }
-
-void main() => runApp(MaterialApp(home: SignUpScreen()));
